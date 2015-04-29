@@ -6,25 +6,6 @@ import hashlib
 
 BASE_URL = 'http://pac.bouillaguet.info/TP5/Rabin-signature'
 
-# def XGCD(a, b):
-#     u = (1, 0)
-#     v = (0, 1)
-#
-#     while(b != 0):
-#         q, r = divmod(a, b)
-#         a = b
-#         b = r
-#         tmp = (u[0] - q * v[0], u[1] - q * v[1])
-#         u = v
-#         v = tmp
-#
-#     return a, u[0], u[1]
-#
-#
-# def invmod(a, b):
-#     g, x, y = XGCD(a, b)
-#     return x
-
 # retourne 1 si racine
 def legendre(a, p):
     tmp = (p - 1) // 2
@@ -169,7 +150,7 @@ if __name__ == '__main__':
     random.seed(seed)
 
     # print('-' * 80)
-    # 
+    #
     # p = getPrimeNumber()
     # while p % 4 != 3:
     #     p = getPrimeNumber()
