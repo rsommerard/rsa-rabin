@@ -169,7 +169,7 @@ if __name__ == '__main__':
     random.seed(seed)
 
     # print('-' * 80)
-    #
+    # 
     # p = getPrimeNumber()
     # while p % 4 != 3:
     #     p = getPrimeNumber()
@@ -285,64 +285,10 @@ if __name__ == '__main__':
     _, r, s = XGCD(p, q)
     x = ((beta * r * p) + ( alpha * s * q)) % n
 
-    # np = int(y, base=16) % p
-    # nq = int(y, base=16) % q
-    #
-    # alpha = heronsqrt(np) % p
-    # beta = heronsqrt(nq) % q
-    #
-    # _, r, s = XGCD(p, q)
-    #
-    # x = ((beta * r * p) + ( alpha * s * q)) % n
-    #
-    # f = ((r * p) - (s * q)) % n
-
     print('x:', x)
-    # print('fx:', f * x)
-    # print('sqtr(y):', isqrt(int(y, base=16)))
     print('x**2:', pow(x, 2, n))
     print('y:', int(y, base=16))
 
     parameters = { 'n': n, 's': x, 'u': "{0:08x}".format(U)}
     response = server.query('/check/sommerard', parameters)
     print(response)
-
-    # x = heronsqrt(int(y, base=16))
-    # print('x:', x)
-    #
-    # print('y:', int(y, base=16))
-    #
-    # xpow = pow(x, 2, n)
-    # while(xpow != int(y, base=16)):
-    #     print('xpow:', xpow)
-    #     print('y:', int(y, base=16))
-    #     xpow = pow(xpow, 2, n)
-    #
-    #
-    # print('xpow:', xpow)
-    # print('y:', int(y, base=16))
-    # print('OK!')
-
-
-    # tmp, _, _ = XGCD(y, n)
-    # while tmp != 1:
-    #     U = random.randint(2, pow(2, k))
-    #     sha = hashlib.sha256()
-    #
-    #     sha.update("{0:08x}".format(m).encode())
-    #     sha.update("{0:08x}".format(U).encode())
-    #
-    #     y = sha.hexdigest()
-
-    # while pow(x, 2, n) != y:
-    #     u += 1
-    #     sha = hashlib.sha256()
-    #
-    #     sha.update("{0:08x}".format(m).encode())
-    #     sha.update("{0:08x}".format(u).encode())
-    #
-    #     y = sha.hexdigest()
-    #     x = heronsqrt(int(y, base=16))
-    #
-    # print('x:', x)
-    # print('u:', u)
