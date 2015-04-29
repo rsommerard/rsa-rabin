@@ -135,6 +135,33 @@ def heronsqrt(n):
         s1 = s2
 
 
+def XGCD(a, b):
+    u = (1, 0)
+    v = (0, 1)
+
+    while(b != 0):
+        q, r = divmod(a, b)
+        a = b
+        b = r
+        tmp = (u[0] - q * v[0], u[1] - q * v[1])
+        u = v
+        v = tmp
+
+    return a, u[0], u[1]
+
+
+def isqrt(n):
+    """ renvoie le plus grand entier k tel que k^2 <= n. Méthode de Newton."""
+    x = n
+    y = (x + 1) // 2
+
+    while y < x:
+        x = y
+        y = (x + n // x) // 2
+
+    return x
+
+
 if __name__ == '__main__':
     server = client.Server(BASE_URL)
 
@@ -164,6 +191,16 @@ if __name__ == '__main__':
     q = 31020600400775637808157586245250887572211915548647731043906784190372842777322668902002892093506464311499121579953651915916189155962835443971937937565276567726627954764651109741742039115894734964711475384032441159309464127332251292664004139095749101426912768635080421004606341641054524929647475201144804230609788041462858252237221954061241771194415647524568439307664592179450375463145187137701526634546424302366055864846435446134238923286692659633907419837964192305901333695772796274975003146905851440115239431168717241360908377863986554986302837628318504026033210650891112737300605814455189666973293473171485778663583
     n = p * q
 
+    if p % 4 == 3:
+        print('p % 4 == 3')
+    else:
+        print('p error: p % 4 != 3')
+
+    if q % 4 == 3:
+        print('q % 4 == 3')
+    else:
+        print('q error: q % 4 != 3')
+
     if isprime(p):
         print('p prime')
     else:
@@ -184,33 +221,118 @@ if __name__ == '__main__':
     response = server.query('/challenge/sommerard', parameters)
 
     m = response['m']
-    # print(m)
-    # print(int(m, base=16))
-    # print("{0:08x}".format(int(m, base=16)))
 
     m = int(m, base=16)
 
-    k = 8192
-    u = random.randint(2, pow(2, k))
+    k = 256
 
-    sha = hashlib.sha256()
+    while True:
+        U = random.randint(2, pow(2, k))
 
-    sha.update("{0:08x}".format(m).encode())
-    sha.update("{0:08x}".format(u).encode())
-
-    y = sha.hexdigest()
-
-    while legendre(int(y, base=16), p) != 1 or legendre(int(y, base=16), q) != 1:
-        u = random.randint(2, pow(2, k))
         sha = hashlib.sha256()
 
         sha.update("{0:08x}".format(m).encode())
-        sha.update("{0:08x}".format(u).encode())
+        sha.update("{0:08x}".format(U).encode())
 
         y = sha.hexdigest()
 
-    print('u>>', u)
-    x = heronsqrt(int(y, base=16)).
+        if legendre(int(y, base=16), p) != 1:
+            print('legendre(int(y, base=16), p) != 1')
+            continue
+
+        if legendre(int(y, base=16), q) != 1:
+            print('legendre(int(y, base=16), q) != 1')
+            continue
+
+        print('U:', U)
+
+        break
+
+    x1p = pow(int(y, base=16), ((p + 1) // 4), p)
+    x2p = p - x1p
+
+    print('x1p:', x1p)
+
+    if pow(x1p, 2, p) == int(y, base=16):
+        print('x1p OK!')
+    else:
+        print('x1p error!')
+
+    print('x2p:', x2p)
+    if pow(x2p, 2, p) == int(y, base=16):
+        print('x2p OK!')
+    else:
+        print('x2p error!')
+
+    x1q = pow(int(y, base=16), ((q + 1) // 4), q)
+    x2q = q - x1q
+
+    print('x1q:', x1q)
+
+    if pow(x1q, 2, q) == int(y, base=16):
+        print('x1q OK!')
+    else:
+        print('x1q error!')
+
+    print('x2q:', x2q)
+    if pow(x2q, 2, q) == int(y, base=16):
+        print('x2q OK!')
+    else:
+        print('x2q error!')
+
+    alpha = x1p
+    beta = x1q
+    _, r, s = XGCD(p, q)
+    x = ((beta * r * p) + ( alpha * s * q)) % n
+
+    # np = int(y, base=16) % p
+    # nq = int(y, base=16) % q
+    #
+    # alpha = heronsqrt(np) % p
+    # beta = heronsqrt(nq) % q
+    #
+    # _, r, s = XGCD(p, q)
+    #
+    # x = ((beta * r * p) + ( alpha * s * q)) % n
+    #
+    # f = ((r * p) - (s * q)) % n
+
+    print('x:', x)
+    # print('fx:', f * x)
+    # print('sqtr(y):', isqrt(int(y, base=16)))
+    print('x**2:', pow(x, 2, n))
+    print('y:', int(y, base=16))
+
+    parameters = { 'n': n, 's': x, 'u': "{0:08x}".format(U)}
+    response = server.query('/check/sommerard', parameters)
+    print(response)
+
+    # x = heronsqrt(int(y, base=16))
+    # print('x:', x)
+    #
+    # print('y:', int(y, base=16))
+    #
+    # xpow = pow(x, 2, n)
+    # while(xpow != int(y, base=16)):
+    #     print('xpow:', xpow)
+    #     print('y:', int(y, base=16))
+    #     xpow = pow(xpow, 2, n)
+    #
+    #
+    # print('xpow:', xpow)
+    # print('y:', int(y, base=16))
+    # print('OK!')
+
+
+    # tmp, _, _ = XGCD(y, n)
+    # while tmp != 1:
+    #     U = random.randint(2, pow(2, k))
+    #     sha = hashlib.sha256()
+    #
+    #     sha.update("{0:08x}".format(m).encode())
+    #     sha.update("{0:08x}".format(U).encode())
+    #
+    #     y = sha.hexdigest()
 
     # while pow(x, 2, n) != y:
     #     u += 1
