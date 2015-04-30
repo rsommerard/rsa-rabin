@@ -21,24 +21,10 @@ if __name__ == '__main__':
 
     secret_key = response['secret-key']
 
-    # i = ''
-    # for l in range(16):
-    #     sha = hashlib.sha256()
-    #     sha.update('sommerard'.encode())
-    #     sha.update("{0:08x}".format(l).encode())
-    #     i += sha.hexdigest()
-    #
-    # print(int(i, base=16))
-    # print(int(i, base=16) % n)
-    # print(pow(secret_key, e, n))
-    #
-    # if pow(secret_key, e, n) == (int(i, base=16) % n):
-    #     print('secret_key ok!')
-    # else:
-    #     print('secret_ket error!')
-    #     exit(1)
+    i = pow(secret_key, e, n)
 
     r = random.randint(1, pow(2, 128))
+    r = 12345
 
     t = pow(r, e, n)
 
@@ -46,12 +32,19 @@ if __name__ == '__main__':
 
     sha = hashlib.sha256()
     sha.update(m.encode())
-    sha.update("{0:08x}".format(t).encode())
+    sha.update(str(t).encode())
     tmp = sha.hexdigest()
+    print(tmp)
 
     hashm = int(tmp, base=16)
     s = (secret_key * pow(r, hashm, n)) % n
 
+    if pow(s, e, n) == ((i * pow(t, hashm, n)) % n):
+        print('signature ok!')
+    else:
+        print('signature error!')
+        exit(1)
+
     parameters = { 's': s, 't': t, 'm': m }
-    response = server.query('/KDC/check/sommerard', parameters)
+    response = server.query('/check/sommerard', parameters)
     print(response)
