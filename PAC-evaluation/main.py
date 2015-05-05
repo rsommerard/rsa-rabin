@@ -43,10 +43,12 @@ if __name__ == '__main__':
     if len(sys.argv) < 2:
         print('Arg error!')
         print('python main.py <category> <grade>')
+        print('>>category: COURS | TD | SAV | SUPPORT | PORTAIL | DS | DIFFICILE | UTILE | GENERAL | TP')
         exit(1)
     elif sys.argv[1] not in categories:
         print('Arg error!')
         print('python main.py <category> <grade>')
+        print('>>category: COURS | TD | SAV | SUPPORT | PORTAIL | DS | DIFFICILE | UTILE | GENERAL | TP')
         exit(1)
 
     category = sys.argv[1]
@@ -63,8 +65,8 @@ if __name__ == '__main__':
     seed = int(time.time())
     random.seed(seed)
 
-    S = random.randint(1, pow(2, 128))
-    # S = 45966684783666058601339552348901769540
+    # S = random.randint(1, pow(2, 128))
+    S = 137306116852650062182619816270626522680
     print('-' * 80)
     print('S:', S)
     print('-' * 80)
@@ -76,7 +78,8 @@ if __name__ == '__main__':
     N = submission[category]['n']
     e = submission[category]['e']
 
-    r = random.randint(2, N - 1)
+    # r = random.randint(2, N - 1)
+    r = 14655749257845349201304025183379820046872341042428654589999957321598948963110281496743691967325012990841257969228187142953174870745621589871147683836328754472077350992142781291133792373966616468745828584943471319288703293095696055868262603371524265514339237154546902461434236801512109239657829395748638914572405308344138671885660526017399099141818247575700320926101338108521935291556363511246325080293746525286523560240280335740698071891736415571275578889570510570734586773500574776911488525752944702463204262674491944123002656138900397474710419779490129595141320747693956076248563264120965920239631744618124556832421
     re = pow(r, e, N)
     tmp, _, _ = XGCD(re, N)
     while tmp != 1:
@@ -98,13 +101,14 @@ if __name__ == '__main__':
         print('sign error!')
         exit(1)
 
-    parameters = { 'category': category, 'blinded': blinded, 'signature': sign }
-    response = server.query('/token/sommerard', parameters)
-    print('-' * 80)
-    print(response)
-    print('-' * 80)
+    # parameters = { 'category': category, 'blinded': blinded, 'signature': sign }
+    # response = server.query('/publication-token/sommerard', parameters)
+    # print('-' * 80)
+    # print(response)
+    # print('-' * 80)
 
-    blind_signature = response['blind-signature']
+    # blind_signature = response['blind-signature']
+    blind_signature = 21329423515113121224163706077070955417458721382908721347938493189113054799161697008664251353482281908713262112561636618330772776060884120877301790708997829773316240305073993990994466121493104181201717258858919376382639465072076392041944719124844382189111523884647448785521388073202950820823289385705794849826231793215133904016817497882690758480641104685642560537748124972953798125332940607357383664225547868417735573075661396026193041030389367012004443255524244897773316946839082141705378780881949659094066780392936540162483720752801933652312345161490554554225954831344583119880227169874116494561380730916988896040854
 
     if pow(blind_signature, e, N) == (blinded % N):
         print('blind_signature ok!')
@@ -115,8 +119,14 @@ if __name__ == '__main__':
     mask = invmod(r, N) % N
     token = (mask * blind_signature) % N
 
-    Sb = random.randint(1, pow(2, 128))
-    # Sb = 222163335339593337246093470171730442793
+    if (token * r) % N == blind_signature:
+        print('token ok!')
+    else:
+        print('token error!')
+        exit(1)
+
+    # Sb = random.randint(1, pow(2, 128))
+    Sb = 192607743734897343530301259326683250491
 
     print('-' * 80)
     print('Sb:', Sb)
@@ -129,7 +139,8 @@ if __name__ == '__main__':
     Nb = receipt[category]['n']
     eb = receipt[category]['e']
 
-    rb = random.randint(2, Nb - 1)
+    # rb = random.randint(2, Nb - 1)
+    rb = 17987284948452793863839290589407588110808238868212534020218260021566457090109595368875984215566589230549787705687408004689499337987114127041925272282177006411584793650918705529582655052130767375799326282392416888821338971043572742190794579430925971705096823623738536324554756833625800762224697437892218268726155582666601571624282486534596886295493962644507437931034740625512641466028870346018142145810897171864685181166026963450880625070651072023893772862263891162590423740930753715877821367168412680471091681467846062258894812515024889529284208730353982269273728603099178934093867632045278297193254427283720059148606
     rbeb = pow(rb, eb, Nb)
     tmp, _, _ = XGCD(rbeb, Nb)
     while tmp != 1:
@@ -153,14 +164,11 @@ if __name__ == '__main__':
 
     parameters = { 'category': category, 'grade': grade, 'comment': '#YOLO',
         'submission-token': token, 'S': S, 'blinded': blindedb }
-
     response = server.query('/post', parameters)
 
     print('-' * 80)
     print(response)
     print('-' * 80)
-
-
 
     # blind_signature_b = response['blind-signature']
     #

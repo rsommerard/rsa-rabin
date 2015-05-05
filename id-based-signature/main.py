@@ -24,7 +24,6 @@ if __name__ == '__main__':
     i = pow(secret_key, e, n)
 
     r = random.randint(1, pow(2, 128))
-    r = 12345
 
     t = pow(r, e, n)
 
@@ -32,7 +31,7 @@ if __name__ == '__main__':
 
     sha = hashlib.sha256()
     sha.update(m.encode())
-    sha.update(str(t).encode())
+    sha.update("{0:08x}".format(t).encode())
     tmp = sha.hexdigest()
     print(tmp)
 
